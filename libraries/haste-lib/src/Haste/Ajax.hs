@@ -33,7 +33,7 @@ textRequest :: MonadIO m
             -> (Maybe String -> IO ())
             -> m ()
 textRequest m url kv cb = do
-        _ <- ajaxReq (toJSStr $ show m) url' True pd cb'     -- here postdata is ""
+        _ <- ajaxReq (toJSStr $ show m) url'  True pd cb'     -- here postdata is ""
         return ()
         where
             cb' = mkCallback $ cb . fmap fromJSStr
