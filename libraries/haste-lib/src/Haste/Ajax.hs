@@ -32,15 +32,17 @@ textRequest :: MonadIO m
             -> [(Key, Val)]
             -> (Maybe String -> IO ())
             -> m ()
-textRequest m url kv cb = do
-  _ <- liftIO $ ajaxReq (toJSStr $ show m) url' True "" cb'
-  return ()
-  where
-    cb' = mkCallback $ cb . fmap fromJSStr
-    kv' = map (\(k,v) -> (toJSStr k, toJSStr v)) kv
-    url' = if null kv
-             then toJSStr url
-             else catJSStr "?" [toJSStr url, toQueryString kv']
+textRequest' m url kv cb = do
+        _ <- ajaxReq (toJSStr $ show m) url' True pd cb'     -- here postdata is ""
+        return ()
+        where
+            cb' = mkCallback $ cb . fmap fromJSStr
+            url' = case m of
+               GET -> if null kv then toJSStr url else catJSStr (toJSStr "?") [toJSStr url, toQueryString kv]
+               POST -> toJSStr url
+            pd = case m of
+               GET -> toJSStr ""
+               POST -> if null kv then toJSString "" else toQueryString kv
 
 -- | Same as 'textRequest' but deals with JSStrings instead of Strings.
 textRequest_ :: MonadIO m
