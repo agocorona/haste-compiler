@@ -32,7 +32,7 @@ textRequest :: MonadIO m
             -> [(Key, Val)]
             -> (Maybe String -> IO ())
             -> m ()
-textRequest' m url kv cb = do
+textRequest m url kv cb = do
         _ <- ajaxReq (toJSStr $ show m) url' True pd cb'     -- here postdata is ""
         return ()
         where
@@ -42,7 +42,7 @@ textRequest' m url kv cb = do
                POST -> toJSStr url
             pd = case m of
                GET -> toJSStr ""
-               POST -> if null kv then toJSString "" else toQueryString kv
+               POST -> if null kv then toJSStr "" else toQueryString kv
 
 -- | Same as 'textRequest' but deals with JSStrings instead of Strings.
 textRequest_ :: MonadIO m
